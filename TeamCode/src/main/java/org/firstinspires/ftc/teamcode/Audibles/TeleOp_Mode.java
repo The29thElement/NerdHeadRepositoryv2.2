@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Audibles;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //TeleOp Annotation
@@ -19,22 +19,23 @@ public class TeleOp_Mode extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Declare Motors
-        DcMotor LeftMotor = hardwareMap.dcMotor.get("LeftMotor");
-        DcMotor RightMotor = hardwareMap.dcMotor.get("RightMotor");
-        DcMotor IntakeMotor = hardwareMap.dcMotor.get("IntakeMotor");
+        FrontLeftMotor = hardwareMap.get(DcMotorEx.class, "FrontLeftMotor");
+        FrontRightMotor = hardwareMap.get(DcMotorEx.class, "FrontRightMotor");
+        BackLeftMotor = hardwareMap.get(DcMotorEx.class, "BackLeftMotor");
+        BackRightMotor =hardwareMap.get(DcMotorEx.class, "BackRightMotor");
+
+        IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+
 
         //Account for reversing Motors
-        RightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //Intake Direction
-        IntakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //DO NOT TOUCH
         waitForStart();
 
         //Stop Button
         if (isStopRequested()) return;
-
         while (opModeIsActive()) {
             intakeControls();
             arcadeDrive();
@@ -65,16 +66,16 @@ public class TeleOp_Mode extends LinearOpMode {
         double x = gamepad1.left_stick_x * 1.1; //Keep Positive
         double rx = gamepad1.right_stick_x;
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
-            double LeftPower = (y + x) / denominator;
-            double RightPower = (y - x) / denominator;
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx)/denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
 
-            LeftMotor.setPower(LeftPower);
-            RightMotor.setPower(RightPower);
+        FrontLeftMotor.setPower(frontLeftPower);
+        FrontRightMotor.setPower(frontRightPower);
 
-            if (gamepad2.circleWasPressed() ) {
-                RightMotor.setPower(1.0);
-            }
-        }
+        BackLeftMotor.setPower(backLeftPower);
+        BackRightMotor.setPower(backRightPower);
     }
 }

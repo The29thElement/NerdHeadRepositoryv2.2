@@ -1,6 +1,6 @@
 //
 // build.gradle in TeamCode
-//
+//WORK PLEASE
 // Most of the definitions for building your module reside in a common, shared
 // file 'build.common.gradle'. Being factored in this way makes it easier to
 // integrate updates to the FTC into your code. If you really need to customize
@@ -25,4 +25,6 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+
 }
+//buiguyf8b7tyfnufbtyfbyrfby8fby
