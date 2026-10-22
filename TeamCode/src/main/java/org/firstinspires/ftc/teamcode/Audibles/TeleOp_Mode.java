@@ -13,6 +13,8 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontRightMotor;
     private DcMotorEx BackRightMotor;
     private DcMotorEx IntakeMotor;
+    private DcMotorEx TransferMotor;
+    private DcMotorEx OuttakeMotor;
 
     boolean motorsPowered = false;
 
@@ -25,6 +27,8 @@ public class TeleOp_Mode extends LinearOpMode {
         BackRightMotor =hardwareMap.get(DcMotorEx.class, "BackRightMotor");
 
         IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
+        TransferMotor = hardwareMap.get(DcMotorEx.class, "TransferMotor");
+        OuttakeMotor = hardwareMap.get(DcMotorEx.class, "OuttakeMotor");
 
 
         //Account for reversing Motors
@@ -38,6 +42,7 @@ public class TeleOp_Mode extends LinearOpMode {
         if (isStopRequested()) return;
         while (opModeIsActive()) {
             intakeControls();
+            OuttakeControls();
             arcadeDrive();
 
             telemetry.update();
@@ -59,6 +64,14 @@ public class TeleOp_Mode extends LinearOpMode {
             IntakeMotor.setPower(0);
             motorsPowered = false;
         }
+    }
+    private void OuttakeControls() {
+
+        double outtakePower = gamepad2.right_stick_y;
+        double transferPower = Math.abs(outtakePower) / outtakePower;
+
+        OuttakeMotor.setPower(outtakePower);
+        TransferMotor.setPower(transferPower);
     }
 
     private void arcadeDrive() {
