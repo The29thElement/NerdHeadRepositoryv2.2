@@ -13,7 +13,8 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontRightMotor;
     private DcMotorEx BackRightMotor;
     private DcMotorEx IntakeMotor;
-    private DcMotorEx TransferMotor;
+    private DcMotorEx FrontTransferMotor;
+    private DcMotorEx BackTransferMotor;
     private DcMotorEx OuttakeMotor;
 
     boolean motorsPowered = false;
@@ -27,7 +28,8 @@ public class TeleOp_Mode extends LinearOpMode {
         BackRightMotor =hardwareMap.get(DcMotorEx.class, "BackRightMotor");
 
         IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
-        TransferMotor = hardwareMap.get(DcMotorEx.class, "TransferMotor");
+        FrontTransferMotor = hardwareMap.get(DcMotorEx.class, "FrontTransferMotor");
+        BackTransferMotor = hardwareMap.get(DcMotorEx.class, "BackTransferMotor");
         OuttakeMotor = hardwareMap.get(DcMotorEx.class, "OuttakeMotor");
 
 
@@ -35,12 +37,16 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
         //DO NOT TOUCH
         waitForStart();
 
         //Stop Button
         if (isStopRequested()) return;
         while (opModeIsActive()) {
+
             intakeControls();
             OuttakeControls();
             arcadeDrive();
@@ -71,7 +77,10 @@ public class TeleOp_Mode extends LinearOpMode {
         double transferPower = Math.abs(outtakePower) / outtakePower;
 
         OuttakeMotor.setPower(outtakePower);
-        TransferMotor.setPower(transferPower);
+        FrontTransferMotor.setPower(transferPower);
+        BackTransferMotor.setPower(transferPower);
+
+        telemetry.addData("value", outtakePower);
     }
 
     private void arcadeDrive() {
