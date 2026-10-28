@@ -16,7 +16,6 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontTransferMotor;
     private DcMotorEx BackTransferMotor;
     private DcMotorEx OuttakeMotor;
-
     boolean motorsPowered = false;
 
     @Override
@@ -37,6 +36,8 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
+        FrontTransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -48,7 +49,7 @@ public class TeleOp_Mode extends LinearOpMode {
         while (opModeIsActive()) {
 
             intakeControls();
-            OuttakeControls();
+            outtakeControls();
             arcadeDrive();
 
             telemetry.update();
@@ -60,27 +61,38 @@ public class TeleOp_Mode extends LinearOpMode {
             IntakeMotor.setPower(1);
             telemetry.addLine("Intake Going Forward");
             motorsPowered = true;
-        }
-        else if (gamepad2.left_bumper && !motorsPowered) {
+        } else if (gamepad2.left_bumper && !motorsPowered) {
             IntakeMotor.setPower(-1);
             telemetry.addLine("Intake Going Backward");
             motorsPowered = true;
-        }
-        else if ((!gamepad2.left_bumper && !gamepad2.right_bumper) || (gamepad2.left_bumper && gamepad2.right_bumper)){
+        } else if ((!gamepad2.left_bumper && !gamepad2.right_bumper) || (gamepad2.left_bumper && gamepad2.right_bumper)) {
             IntakeMotor.setPower(0);
             motorsPowered = false;
         }
     }
-    private void OuttakeControls() {
+    private void outtakeControls() {
 
-        double outtakePower = gamepad2.right_stick_y;
-        double transferPower = Math.abs(outtakePower) / outtakePower;
+        double outtakePower = 0;
+
+        if(gamepad2.cross) {
+            outtakePower = 0.9;
+        }
+        else if(gamepad2.square) {
+            outtakePower = 0.8;
+        }
+        else if(gamepad2.triangle) {
+            outtakePower = 0.7;
+        }
+        else if(gamepad2.circle) {
+            outtakePower = 0.6;
+        }
+
+        double transferPower = 1;
+
 
         OuttakeMotor.setPower(outtakePower);
         FrontTransferMotor.setPower(transferPower);
         BackTransferMotor.setPower(transferPower);
-
-        telemetry.addData("value", outtakePower);
     }
 
     private void arcadeDrive() {
