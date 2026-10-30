@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 //TeleOp Annotation
 @TeleOp
@@ -40,6 +41,13 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontTransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
+        OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+
 
         //DO NOT TOUCH
         waitForStart();
@@ -72,27 +80,21 @@ public class TeleOp_Mode extends LinearOpMode {
     }
     private void outtakeControls() {
 
-        double outtakePower = 0;
-
-        if(gamepad2.cross) {
-            outtakePower = 0.9;
-        }
-        else if(gamepad2.square) {
-            outtakePower = 0.8;
-        }
-        else if(gamepad2.triangle) {
-            outtakePower = 0.7;
-        }
-        else if(gamepad2.circle) {
-            outtakePower = 0.6;
-        }
-
         double transferPower = 1;
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
 
-
-        OuttakeMotor.setPower(outtakePower);
         FrontTransferMotor.setPower(transferPower);
-        BackTransferMotor.setPower(transferPower);
+        BackTransferMotor.setPower(-transferPower);
+        OuttakeMotor.setVelocity(0);
+
+        while (gamepad2.circle) {
+
+            OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+            OuttakeMotor.setVelocity(1500);
+
+            BackTransferMotor.setPower(transferPower);
+
+        }
     }
 
     private void arcadeDrive() {
