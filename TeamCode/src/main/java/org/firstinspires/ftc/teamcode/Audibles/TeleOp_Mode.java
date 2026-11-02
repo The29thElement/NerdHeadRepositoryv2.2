@@ -17,7 +17,8 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontTransferMotor;
     private DcMotorEx BackTransferMotor;
     private DcMotorEx OuttakeMotor;
-    boolean motorsPowered = false;
+    boolean transfer = false;
+    boolean outtake = false;
 
     @Override
     public void runOpMode() {
@@ -41,11 +42,18 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontTransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
+
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        OuttakeMotor.setVelocity(0);
+        FrontTransferMotor.setPower(0);
+        BackTransferMotor.setPower(0);
+
 
 
 
@@ -57,6 +65,7 @@ public class TeleOp_Mode extends LinearOpMode {
         while (opModeIsActive()) {
 
             intakeControls();
+            transferControls();
             outtakeControls();
             arcadeDrive();
 
@@ -65,46 +74,92 @@ public class TeleOp_Mode extends LinearOpMode {
     }
 
     private void intakeControls() {
-        if (gamepad2.right_bumper && !motorsPowered) {
-            IntakeMotor.setPower(1);
-            telemetry.addLine("Intake Going Forward");
-            motorsPowered = true;
-        } else if (gamepad2.left_bumper && !motorsPowered) {
-            IntakeMotor.setPower(-1);
-            telemetry.addLine("Intake Going Backward");
-            motorsPowered = true;
-        } else if ((!gamepad2.left_bumper && !gamepad2.right_bumper) || (gamepad2.left_bumper && gamepad2.right_bumper)) {
-            IntakeMotor.setPower(0);
-            motorsPowered = false;
+        if (gamepad2.crossWasPressed()) {
+            if (!transfer) {
+                IntakeMotor.setPower(1);
+                telemetry.addLine("Intake On");
+                transfer = true;
+
+            }
+            else {
+                IntakeMotor.setPower(0);
+                telemetry.addLine("Intake Off");
+                transfer = false;
+            }
         }
+        if (gamepad2.squareWasPressed()) {
+            if (!transfer) {
+                IntakeMotor.setPower(-1);
+                telemetry.addLine("Intake On");
+                transfer = true;
+
+            }
+            else {
+                IntakeMotor.setPower(0);
+                telemetry.addLine("Intake Off");
+                transfer = false;
+            }
+        }
+
     }
     private void outtakeControls() {
 
-        double transferPower = 1;
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
+        if (gamepad2.circleWasPressed()) {
 
-        FrontTransferMotor.setPower(transferPower);
-        BackTransferMotor.setPower(-transferPower);
-        OuttakeMotor.setVelocity(0);
+            if (!outtake) {
+                OuttakeMotor.setVelocity(1600);
+                telemetry.addLine("Outtake On");
+                outtake = true;
+            }
+            else {
+                OuttakeMotor.setVelocity(0);
+                telemetry.addLine("Outtake off");
+                outtake = false;
+            }
+        }
 
-        while (gamepad2.circle) {
 
-            OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-            OuttakeMotor.setVelocity(1500);
 
-            BackTransferMotor.setPower(transferPower);
+    }
+    private void transferControls() {
+
+
+
+        if (gamepad2.right_bumper) {
+
+            FrontTransferMotor.setPower(1);
+            BackTransferMotor.setPower(1);
+
+        }
+        else if (gamepad2.left_bumper) {
+
+            FrontTransferMotor.setPower(-1);
+            BackTransferMotor.setPower(-1);
+
+        }
+        else  {
+
+            FrontTransferMotor.setPower(0);
+            BackTransferMotor.setPower(0);
 
         }
     }
 
+
     private void arcadeDrive() {
-        double y = -gamepad1.left_stick_y; //Keep Negative
-        double x = gamepad1.left_stick_x * 1.1; //Keep Positive
-        double rx = gamepad1.right_stick_x;
+        double yTar = -gamepad1.right_stick_y * 0.8; //Keep Negative
+        double xTar = gamepad1.right_stick_x * 0.8 * 1.1; //Keep Positive
+        double rxTar = gamepad1.left_stick_x * 0.8;
+
+        double y = yTar;
+
+        double x = xTar;
+
+        double rx = rxTar;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx)/denominator;
+        double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
