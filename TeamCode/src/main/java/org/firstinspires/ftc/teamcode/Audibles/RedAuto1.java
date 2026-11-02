@@ -34,13 +34,11 @@ public class RedAuto1 extends LinearOpMode {
         if (opModeIsActive()) {
 
             sleep(1000);
-
             FrontLeftMotor.setPower(0.5);
             FrontRightMotor.setPower(0.5);
             BackLeftMotor.setPower(0.5);
             BackRightMotor.setPower(0.5);
 
-            sleep(900);
             FrontLeftMotor.setPower(0);
             FrontRightMotor.setPower(0);
             BackLeftMotor.setPower(0);

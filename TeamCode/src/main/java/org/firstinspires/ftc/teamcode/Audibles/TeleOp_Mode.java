@@ -144,8 +144,6 @@ public class TeleOp_Mode extends LinearOpMode {
 
         }
     }
-
-
     private void arcadeDrive() {
         double yTar = -gamepad1.right_stick_y * 0.8; //Keep Negative
         double xTar = gamepad1.right_stick_x * 0.8 * 1.1; //Keep Positive
