@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-//TeleOp Annotation
 @TeleOp
 public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontLeftMotor;
@@ -17,8 +17,11 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontTransferMotor;
     private DcMotorEx BackTransferMotor;
     private DcMotorEx OuttakeMotor;
+    private Servo LeftIntakeServo;
+    private Servo RightIntakeServo;
     boolean transfer = false;
     boolean outtake = false;
+    boolean ServoPos = false;
 
     @Override
     public void runOpMode() {
@@ -33,19 +36,21 @@ public class TeleOp_Mode extends LinearOpMode {
         BackTransferMotor = hardwareMap.get(DcMotorEx.class, "BackTransferMotor");
         OuttakeMotor = hardwareMap.get(DcMotorEx.class, "OuttakeMotor");
 
+        LeftIntakeServo = hardwareMap.get(Servo.class, "LeftIntakeServo");
+        RightIntakeServo = hardwareMap.get(Servo.class, "RightIntakeServo");
+
 
         //Account for reversing Motors
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
         FrontTransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        LeftIntakeServo.setPosition(0);
+        RightIntakeServo.setPosition(0);
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -54,32 +59,25 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontTransferMotor.setPower(0);
         BackTransferMotor.setPower(0);
 
-
-
-
         //DO NOT TOUCH
         waitForStart();
 
         //Stop Button
         if (isStopRequested()) return;
         while (opModeIsActive()) {
-
             intakeControls();
             transferControls();
             outtakeControls();
             arcadeDrive();
-
             telemetry.update();
         }
     }
-
     private void intakeControls() {
         if (gamepad2.crossWasPressed()) {
             if (!transfer) {
                 IntakeMotor.setPower(1);
                 telemetry.addLine("Intake On");
                 transfer = true;
-
             }
             else {
                 IntakeMotor.setPower(0);
@@ -92,7 +90,6 @@ public class TeleOp_Mode extends LinearOpMode {
                 IntakeMotor.setPower(-1);
                 telemetry.addLine("Intake On");
                 transfer = true;
-
             }
             else {
                 IntakeMotor.setPower(0);
@@ -100,12 +97,19 @@ public class TeleOp_Mode extends LinearOpMode {
                 transfer = false;
             }
         }
-
+        if (gamepad2.triangle && !ServoPos) {
+            LeftIntakeServo.setPosition(135.0/300.0);
+            RightIntakeServo.setPosition(135.0/300.0);
+            ServoPos = true;
+        }
+        else {
+            LeftIntakeServo.setPosition(0);
+            RightIntakeServo.setPosition(0);
+            ServoPos = false;
+        }
     }
     private void outtakeControls() {
-
         if (gamepad2.circleWasPressed()) {
-
             if (!outtake) {
                 OuttakeMotor.setVelocity(1600);
                 telemetry.addLine("Outtake On");
@@ -117,31 +121,19 @@ public class TeleOp_Mode extends LinearOpMode {
                 outtake = false;
             }
         }
-
-
-
     }
     private void transferControls() {
-
-
-
         if (gamepad2.right_bumper) {
-
             FrontTransferMotor.setPower(1);
             BackTransferMotor.setPower(1);
-
         }
         else if (gamepad2.left_bumper) {
-
             FrontTransferMotor.setPower(-1);
             BackTransferMotor.setPower(-1);
-
         }
         else  {
-
             FrontTransferMotor.setPower(0);
             BackTransferMotor.setPower(0);
-
         }
     }
     private void arcadeDrive() {
@@ -150,9 +142,7 @@ public class TeleOp_Mode extends LinearOpMode {
         double rxTar = gamepad1.left_stick_x * 0.8;
 
         double y = yTar;
-
         double x = xTar;
-
         double rx = rxTar;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
@@ -163,7 +153,6 @@ public class TeleOp_Mode extends LinearOpMode {
 
         FrontLeftMotor.setPower(frontLeftPower);
         FrontRightMotor.setPower(frontRightPower);
-
         BackLeftMotor.setPower(backLeftPower);
         BackRightMotor.setPower(backRightPower);
     }
