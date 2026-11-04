@@ -49,8 +49,8 @@ public class TeleOp_Mode extends LinearOpMode {
 
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        LeftIntakeServo.setPosition(0);
-        RightIntakeServo.setPosition(0);
+        LeftIntakeServo.setPosition(-0.5);
+        RightIntakeServo.setPosition(0.5);
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -97,14 +97,14 @@ public class TeleOp_Mode extends LinearOpMode {
                 transfer = false;
             }
         }
-        if (gamepad2.triangle && !ServoPos) {
-            LeftIntakeServo.setPosition(135.0/300.0);
-            RightIntakeServo.setPosition(135.0/300.0);
+        if (gamepad2.triangleWasPressed()) {
+            LeftIntakeServo.setPosition(0.5);
+            RightIntakeServo.setPosition(-0.5);
             ServoPos = true;
         }
         else {
-            LeftIntakeServo.setPosition(0);
-            RightIntakeServo.setPosition(0);
+            LeftIntakeServo.setPosition(-0.5);
+            RightIntakeServo.setPosition(0.5);
             ServoPos = false;
         }
     }
