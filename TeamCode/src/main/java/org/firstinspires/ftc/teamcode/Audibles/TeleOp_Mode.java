@@ -52,8 +52,8 @@ public class TeleOp_Mode extends LinearOpMode {
         LeftIntakeServo.setPosition(-0.5);
         RightIntakeServo.setPosition(0.5);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
-        OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        PIDFCoefficients outtakepidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
+        OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, outtakepidfCoefficients);
 
         OuttakeMotor.setVelocity(0);
         FrontTransferMotor.setPower(0);
@@ -141,13 +141,9 @@ public class TeleOp_Mode extends LinearOpMode {
         }
     }
     private void arcadeDrive() {
-        double yTar = -gamepad1.right_stick_y * 0.8; //Keep Negative
-        double xTar = gamepad1.right_stick_x * 0.8 * 1.1; //Keep Positive
-        double rxTar = gamepad1.left_stick_x * 0.8;
-
-        double y = yTar;
-        double x = xTar;
-        double rx = rxTar;
+        double y = -gamepad1.right_stick_y * 0.8; //Keep Negative
+        double x = gamepad1.right_stick_x * 0.8 * 1.1; //Keep Positive
+        double rx = gamepad1.left_stick_x * 0.8;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
