@@ -28,7 +28,6 @@ public class TeleOp_Mode extends LinearOpMode {
     boolean transfer = false;
     boolean outtake = false;
     boolean IntakeServoPos = false;
-
     @Override
     public void runOpMode() throws InterruptedException {
         //Declare everything
@@ -88,7 +87,6 @@ public class TeleOp_Mode extends LinearOpMode {
             telemetry.update();
         }
     }
-
     private void intakeControls() {
         if (gamepad2.crossWasPressed()) {
             if (!transfer) {
@@ -129,7 +127,6 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
     }
-
     private void outtakeControls() {
         if (gamepad2.circleWasPressed()) {
             if (!outtake) {
@@ -150,7 +147,6 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
     }
-
     private void transferControls() {
         if (gamepad2.right_bumper) {
             TransferMotor.setPower(1);
@@ -162,7 +158,6 @@ public class TeleOp_Mode extends LinearOpMode {
             TransferMotor.setPower(0);
         }
     }
-
     private void arcadeDrive() {
         double y = -gamepad1.left_stick_y; //Keep Negative
         double x = gamepad1.left_stick_x; //Keep Positive
