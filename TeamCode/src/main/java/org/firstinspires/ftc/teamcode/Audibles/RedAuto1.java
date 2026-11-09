@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Audibles;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -23,7 +22,6 @@ public class RedAuto1 extends LinearOpMode {
         Drive -> Movement State
         Shoot -> Attempt to Score
         Flower -> Attempt to remove pollen*/
-
         Drive_StartPos_ShootPos,
         ShootPreload,
         Drive_ShootPos_FlowerPos,
@@ -36,7 +34,7 @@ public class RedAuto1 extends LinearOpMode {
     private final Pose startPose = new Pose(57.93,7.7, Math.toRadians(90));
     private final Pose shootPose = new Pose(57.93,33.5, Math.toRadians(90));
     private final Pose flowerPose = new Pose(9.75, 45.5, Math.toRadians(180));
-    private final Pose parkPose = new Pose(14.91, 101.77, Math.toRadians(0));
+    private final Pose parkPose = new Pose(11.64, 95.61, Math.toRadians(180));
     private PathChain driveStartPosShootPos;
     private PathChain driveShootPosFlowerPos;
     private PathChain driveFlowerPosParkPose;

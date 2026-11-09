@@ -23,15 +23,15 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx OuttakeMotor;
     private Servo LeftIntakeServo;
     private Servo RightIntakeServo;
-    private Servo FlapServo;
+    private Servo GateServo;
     private IMU imu;
     boolean transfer = false;
     boolean outtake = false;
-    boolean ServoPos = false;
+    boolean IntakeServoPos = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //Declare Motors
+        //Declare everything
         FrontLeftMotor = hardwareMap.get(DcMotorEx.class, "FrontLeftMotor");
         FrontRightMotor = hardwareMap.get(DcMotorEx.class, "FrontRightMotor");
         BackLeftMotor = hardwareMap.get(DcMotorEx.class, "BackLeftMotor");
@@ -43,7 +43,7 @@ public class TeleOp_Mode extends LinearOpMode {
 
         LeftIntakeServo = hardwareMap.get(Servo.class, "LeftIntakeServo");
         RightIntakeServo = hardwareMap.get(Servo.class, "RightIntakeServo");
-        FlapServo = hardwareMap.get(Servo.class, "FlapServo");
+        GateServo = hardwareMap.get(Servo.class, "FlapServo");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -65,7 +65,7 @@ public class TeleOp_Mode extends LinearOpMode {
         //Initialized Position
         LeftIntakeServo.setPosition(-0.5);
         RightIntakeServo.setPosition(0.5);
-        FlapServo.setPosition(0);
+        GateServo.setPosition(0);
 
         PIDFCoefficients outtakepidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, outtakepidfCoefficients);
@@ -115,17 +115,17 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
         if (gamepad2.triangleWasPressed()) {
-            if (!ServoPos) {
+            if (!IntakeServoPos) {
                 LeftIntakeServo.setPosition(0.5);
                 RightIntakeServo.setPosition(-0.5);
                 telemetry.addLine("Servos Powered Up!");
-                ServoPos = true;
+                IntakeServoPos = true;
             }
             else {
                 LeftIntakeServo.setPosition(-0.5);
                 RightIntakeServo.setPosition(0.5);
                 telemetry.addLine("Servos Powered Down!");
-                ServoPos = false;
+                IntakeServoPos = false;
             }
         }
     }
@@ -136,10 +136,10 @@ public class TeleOp_Mode extends LinearOpMode {
                 OuttakeMotor.setVelocity(1600);
                 telemetry.addLine("Outtake On");
                 if(gamepad2.optionsWasPressed()) {
-                    FlapServo.setPosition(1.0);
+                    GateServo.setPosition(1.0);
                 }
                 else {
-                    FlapServo.setPosition(0);
+                   GateServo.setPosition(0);
                 }
                 outtake = true;
             }
@@ -164,7 +164,7 @@ public class TeleOp_Mode extends LinearOpMode {
     }
 
     private void arcadeDrive() {
-        double y = -gamepad1.right_stick_y; //Keep Negative
+        double y = -gamepad1.left_stick_y; //Keep Negative
         double x = gamepad1.left_stick_x; //Keep Positive
         double rx = gamepad1.right_stick_x;
 
