@@ -19,18 +19,18 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx FrontRightMotor;
     private DcMotorEx BackRightMotor;
     private DcMotorEx IntakeMotor;
-    private DcMotorEx FrontTransferMotor;
-    private DcMotorEx BackTransferMotor;
+    private DcMotorEx TransferMotor;
     private DcMotorEx OuttakeMotor;
     private Servo LeftIntakeServo;
     private Servo RightIntakeServo;
+    private Servo FlapServo;
     private IMU imu;
     boolean transfer = false;
     boolean outtake = false;
     boolean ServoPos = false;
 
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         //Declare Motors
         FrontLeftMotor = hardwareMap.get(DcMotorEx.class, "FrontLeftMotor");
         FrontRightMotor = hardwareMap.get(DcMotorEx.class, "FrontRightMotor");
@@ -38,12 +38,12 @@ public class TeleOp_Mode extends LinearOpMode {
         BackRightMotor =hardwareMap.get(DcMotorEx.class, "BackRightMotor");
 
         IntakeMotor = hardwareMap.get(DcMotorEx.class, "IntakeMotor");
-        FrontTransferMotor = hardwareMap.get(DcMotorEx.class, "FrontTransferMotor");
-        BackTransferMotor = hardwareMap.get(DcMotorEx.class, "BackTransferMotor");
+        TransferMotor = hardwareMap.get(DcMotorEx.class, "TransferMotor");
         OuttakeMotor = hardwareMap.get(DcMotorEx.class, "OuttakeMotor");
 
         LeftIntakeServo = hardwareMap.get(Servo.class, "LeftIntakeServo");
         RightIntakeServo = hardwareMap.get(Servo.class, "RightIntakeServo");
+        FlapServo = hardwareMap.get(Servo.class, "FlapServo");
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -51,7 +51,7 @@ public class TeleOp_Mode extends LinearOpMode {
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         BackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        FrontTransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        TransferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -65,13 +65,13 @@ public class TeleOp_Mode extends LinearOpMode {
         //Initialized Position
         LeftIntakeServo.setPosition(-0.5);
         RightIntakeServo.setPosition(0.5);
+        FlapServo.setPosition(0);
 
         PIDFCoefficients outtakepidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, outtakepidfCoefficients);
 
         OuttakeMotor.setVelocity(0);
-        FrontTransferMotor.setPower(0);
-        BackTransferMotor.setPower(0);
+        TransferMotor.setPower(0);
 
         imu.initialize(parameters);
 
@@ -88,6 +88,7 @@ public class TeleOp_Mode extends LinearOpMode {
             telemetry.update();
         }
     }
+
     private void intakeControls() {
         if (gamepad2.crossWasPressed()) {
             if (!transfer) {
@@ -128,11 +129,18 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
     }
+
     private void outtakeControls() {
         if (gamepad2.circleWasPressed()) {
             if (!outtake) {
                 OuttakeMotor.setVelocity(1600);
                 telemetry.addLine("Outtake On");
+                if(gamepad2.optionsWasPressed()) {
+                    FlapServo.setPosition(1.0);
+                }
+                else {
+                    FlapServo.setPosition(0);
+                }
                 outtake = true;
             }
             else {
@@ -142,20 +150,19 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
     }
+
     private void transferControls() {
         if (gamepad2.right_bumper) {
-            FrontTransferMotor.setPower(1);
-            BackTransferMotor.setPower(1);
+            TransferMotor.setPower(1);
         }
         else if (gamepad2.left_bumper) {
-            FrontTransferMotor.setPower(-1);
-            BackTransferMotor.setPower(-1);
+            TransferMotor.setPower(-1);
         }
         else  {
-            FrontTransferMotor.setPower(0);
-            BackTransferMotor.setPower(0);
+            TransferMotor.setPower(0);
         }
     }
+
     private void arcadeDrive() {
         double y = -gamepad1.right_stick_y; //Keep Negative
         double x = gamepad1.left_stick_x; //Keep Positive
@@ -166,7 +173,6 @@ public class TeleOp_Mode extends LinearOpMode {
         }
 
         double BotHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
         double rotX = x * Math.cos(-BotHeading) - y * Math.sin(-BotHeading);
         double rotY = x * Math.sin(-BotHeading) + y * Math.cos(-BotHeading);
 
