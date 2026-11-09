@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Audibles;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 @TeleOp
 public class TeleOp_Mode extends LinearOpMode {
@@ -19,12 +24,13 @@ public class TeleOp_Mode extends LinearOpMode {
     private DcMotorEx OuttakeMotor;
     private Servo LeftIntakeServo;
     private Servo RightIntakeServo;
+    private IMU imu;
     boolean transfer = false;
     boolean outtake = false;
     boolean ServoPos = false;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         //Declare Motors
         FrontLeftMotor = hardwareMap.get(DcMotorEx.class, "FrontLeftMotor");
         FrontRightMotor = hardwareMap.get(DcMotorEx.class, "FrontRightMotor");
@@ -39,6 +45,7 @@ public class TeleOp_Mode extends LinearOpMode {
         LeftIntakeServo = hardwareMap.get(Servo.class, "LeftIntakeServo");
         RightIntakeServo = hardwareMap.get(Servo.class, "RightIntakeServo");
 
+        imu = hardwareMap.get(IMU.class, "imu");
 
         //Account for reversing Motors
         FrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -49,6 +56,13 @@ public class TeleOp_Mode extends LinearOpMode {
 
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        //IMU orientation
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+
+        //Initialized Position
         LeftIntakeServo.setPosition(-0.5);
         RightIntakeServo.setPosition(0.5);
 
@@ -58,6 +72,8 @@ public class TeleOp_Mode extends LinearOpMode {
         OuttakeMotor.setVelocity(0);
         FrontTransferMotor.setPower(0);
         BackTransferMotor.setPower(0);
+
+        imu.initialize(parameters);
 
         //DO NOT TOUCH
         waitForStart();
@@ -141,15 +157,26 @@ public class TeleOp_Mode extends LinearOpMode {
         }
     }
     private void arcadeDrive() {
-        double y = -gamepad1.right_stick_y * 0.8; //Keep Negative
-        double x = gamepad1.right_stick_x * 0.8 * 1.1; //Keep Positive
-        double rx = gamepad1.left_stick_x * 0.8;
+        double y = -gamepad1.right_stick_y; //Keep Negative
+        double x = gamepad1.left_stick_x; //Keep Positive
+        double rx = gamepad1.right_stick_x;
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        if (gamepad1.options){
+            imu.resetYaw();
+        }
+
+        double BotHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        double rotX = x * Math.cos(-BotHeading) - y * Math.sin(-BotHeading);
+        double rotY = x * Math.sin(-BotHeading) + y * Math.cos(-BotHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
 
         FrontLeftMotor.setPower(frontLeftPower);
         FrontRightMotor.setPower(frontRightPower);

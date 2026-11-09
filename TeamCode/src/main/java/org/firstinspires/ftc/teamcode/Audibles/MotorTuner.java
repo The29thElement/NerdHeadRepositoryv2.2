@@ -2,16 +2,12 @@ package org.firstinspires.ftc.teamcode.Audibles;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 
 @TeleOp
 public class MotorTuner extends LinearOpMode {
-
     public double hRPM = 1600;
     public double lRPM = 900;
     double cRPM = hRPM;
@@ -20,18 +16,12 @@ public class MotorTuner extends LinearOpMode {
     double[] stepSizes = {10.0, 1.0, 0.1, 0.001, 0.0001};
     int stepIdx = 1;
     private DcMotorEx OuttakeMotor;
-
     @Override
     public void runOpMode() {
-        while (opModeInInit()) {
-
-        }
-
         OuttakeMotor = hardwareMap.get(DcMotorEx.class, "OuttakeMotor");
         OuttakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         OuttakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
         OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -78,8 +68,6 @@ public class MotorTuner extends LinearOpMode {
             OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
             OuttakeMotor.setVelocity(cRPM);
 
-
-
             double cVelo = OuttakeMotor.getVelocity();
             double error = cRPM - cVelo;
 
@@ -93,5 +81,4 @@ public class MotorTuner extends LinearOpMode {
             telemetry.update();
         }
     }
-
 }
