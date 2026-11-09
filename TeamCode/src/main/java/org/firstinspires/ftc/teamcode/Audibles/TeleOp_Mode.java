@@ -52,8 +52,8 @@ public class TeleOp_Mode extends LinearOpMode {
         LeftIntakeServo.setPosition(-0.5);
         RightIntakeServo.setPosition(0.5);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
-        OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        PIDFCoefficients outtakepidfCoefficients = new PIDFCoefficients(109, 0, 0, 16);
+        OuttakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, outtakepidfCoefficients);
 
         OuttakeMotor.setVelocity(0);
         FrontTransferMotor.setPower(0);
