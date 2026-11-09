@@ -98,14 +98,18 @@ public class TeleOp_Mode extends LinearOpMode {
             }
         }
         if (gamepad2.triangleWasPressed()) {
-            LeftIntakeServo.setPosition(0.5);
-            RightIntakeServo.setPosition(-0.5);
-            ServoPos = true;
-        }
-        else {
-            LeftIntakeServo.setPosition(-0.5);
-            RightIntakeServo.setPosition(0.5);
-            ServoPos = false;
+            if (!ServoPos) {
+                LeftIntakeServo.setPosition(0.5);
+                RightIntakeServo.setPosition(-0.5);
+                telemetry.addLine("Servos Powered Up!");
+                ServoPos = true;
+            }
+            else {
+                LeftIntakeServo.setPosition(-0.5);
+                RightIntakeServo.setPosition(0.5);
+                telemetry.addLine("Servos Powered Down!");
+                ServoPos = false;
+            }
         }
     }
     private void outtakeControls() {
