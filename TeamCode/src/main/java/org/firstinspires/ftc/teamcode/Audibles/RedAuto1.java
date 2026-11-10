@@ -5,15 +5,11 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
 @Autonomous
 public class RedAuto1 extends LinearOpMode {
-
     private Follower follower;
     private Timer pathTimer;
     private Timer opModeTimer;
@@ -28,9 +24,7 @@ public class RedAuto1 extends LinearOpMode {
         IntakeFlower,
         Drive_FlowerPos_ParkPos
     }
-
     PathState pathState;
-
     private final Pose startPose = new Pose(57.93,7.7, Math.toRadians(90));
     private final Pose shootPose = new Pose(57.93,33.5, Math.toRadians(90));
     private final Pose flowerPose = new Pose(9.75, 45.5, Math.toRadians(180));
@@ -38,7 +32,6 @@ public class RedAuto1 extends LinearOpMode {
     private PathChain driveStartPosShootPos;
     private PathChain driveShootPosFlowerPos;
     private PathChain driveFlowerPosParkPose;
-
     @Override
     public void runOpMode() {
         pathState = PathState.Drive_StartPos_ShootPos;
