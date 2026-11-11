@@ -32,6 +32,7 @@ public class RedAuto1 extends LinearOpMode {
     private PathChain driveStartPosShootPos;
     private PathChain driveShootPosFlowerPos;
     private PathChain driveFlowerPosParkPose;
+
     @Override
     public void runOpMode() {
         pathState = PathState.Drive_StartPos_ShootPos;
@@ -65,10 +66,12 @@ public class RedAuto1 extends LinearOpMode {
                 .addPath(new BezierLine(startPose, shootPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading())
                 .build();
+
         driveShootPosFlowerPos = follower.pathBuilder()
                 .addPath(new BezierLine(shootPose, flowerPose))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), flowerPose.getHeading())
                 .build();
+
         driveFlowerPosParkPose = follower.pathBuilder()
                 .addPath(new BezierLine(flowerPose, parkPose))
                 .setLinearHeadingInterpolation(flowerPose.getHeading(), parkPose.getHeading())
