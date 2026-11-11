@@ -22,7 +22,6 @@ public class TeleOp_Mode extends LinearOpMode {
     private Servo RightIntakeServo;
     private Servo GateServo;
     private IMU imu;
-    boolean intake = false;
     boolean outtake = false;
     boolean IntakeServoPos = false;
     @Override
@@ -91,10 +90,7 @@ public class TeleOp_Mode extends LinearOpMode {
         else if (gamepad1.left_bumper) {
             IntakeMotor.setPower(-1);
         }
-        else if (gamepad1.right_bumper && gamepad1.left_bumper) {
-            IntakeMotor.setPower(0);
-        }
-        else {
+        else if ((gamepad1.right_bumper && gamepad1.left_bumper) || (!gamepad1.right_bumper && !gamepad1.left_bumper)) {
             IntakeMotor.setPower(0);
         }
         if (gamepad1.triangleWasPressed()) {
