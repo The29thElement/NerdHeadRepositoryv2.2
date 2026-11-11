@@ -17,7 +17,8 @@ public class RedAuto1 extends LinearOpMode {
         /*Start Position -> End Position
         Drive -> Movement State
         Shoot -> Attempt to Score
-        Flower -> Attempt to remove pollen*/
+        Flower -> Attempt to remove pollen
+        Park -> Self-Explanatory*/
         Drive_StartPos_ShootPos,
         ShootPreload,
         Drive_ShootPos_FlowerPos,

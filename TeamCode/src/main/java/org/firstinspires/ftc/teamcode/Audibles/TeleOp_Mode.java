@@ -149,10 +149,8 @@ public class TeleOp_Mode extends LinearOpMode {
         }
 
         double BotHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double rotX = x * Math.cos(-BotHeading) - y * Math.sin(-BotHeading);
+        double rotX = x * Math.cos(-BotHeading) - y * Math.sin(-BotHeading) * 1.1;
         double rotY = x * Math.sin(-BotHeading) + y * Math.cos(-BotHeading);
-
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
